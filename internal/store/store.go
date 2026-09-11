@@ -48,6 +48,7 @@ func (s *Store) GetRedirectURL(shortCode string) (string, error) {
 }
 
 func (s *Store) PutRedirectURL(shortCode, url string) error {
+
 	return s.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(URLS))
 		if bucket == nil {
