@@ -26,7 +26,6 @@ func New(path string) (*Store, error) {
 		db.Close()
 		return nil, err
 	}
-
 	return &Store{db}, nil
 }
 
@@ -46,4 +45,18 @@ func (s *Store) GetRedirectURL(shortCode string) (string, error) {
 		return nil
 	})
 	return url, err
+}
+
+func (s *Store) PutRedirectURL(shortCode, url string) error {
+	return s.db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(URLS))
+		if bucket == nil {
+			return errors.New("bucket not found")
+		}
+		result := bucket.Get([]byte(shortCode))
+		if result != nil {
+			return errors.New("short code already exists")
+		}
+		return bucket.Put([]byte(shortCode), []byte(url))
+	})
 }
