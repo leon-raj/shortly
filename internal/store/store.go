@@ -52,6 +52,7 @@ func (s *Store) GetRedirectURL(shortCode string) (string, error) {
 	return url, err
 }
 
+// TODO : maybe perform validation here
 func (s *Store) PutRedirectURL(shortCode, url string) error {
 
 	return s.db.Update(func(tx *bolt.Tx) error {
