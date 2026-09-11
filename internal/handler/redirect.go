@@ -5,7 +5,7 @@ import (
 	"shortly/internal/store"
 )
 
-func (h *Handler) redirect(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Redirect(w http.ResponseWriter, r *http.Request) {
 
 	s := r.PathValue("shortCode")
 	if !isValidShortCode(s) {
