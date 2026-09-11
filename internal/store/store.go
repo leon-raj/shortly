@@ -1,6 +1,10 @@
 package store
 
-import bolt "go.etcd.io/bbolt"
+import (
+	"errors"
+
+	bolt "go.etcd.io/bbolt"
+)
 
 type Store struct {
 	db *bolt.DB
@@ -14,7 +18,6 @@ func New(path string) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	err = db.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(URLS))
 		return err
@@ -25,4 +28,22 @@ func New(path string) (*Store, error) {
 	}
 
 	return &Store{db}, nil
+}
+
+func (s *Store) GetRedirectURL(shortCode string) (string, error) {
+
+	var url string
+	err := s.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(URLS))
+		if bucket == nil {
+			return errors.New("bucket not found")
+		}
+		result := bucket.Get([]byte(shortCode))
+		if result == nil {
+			return errors.New("url not found")
+		}
+		url = string(result)
+		return nil
+	})
+	return url, err
 }
