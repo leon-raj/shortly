@@ -18,7 +18,7 @@ func (h *Handler) Redirect(w http.ResponseWriter, r *http.Request) {
 		if err == store.ErrNotFound {
 			http.Error(w, err.Error(), http.StatusNotFound)
 		} else {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, "internal server error", http.StatusInternalServerError)
 		}
 		return
 	}
