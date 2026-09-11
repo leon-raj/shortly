@@ -12,6 +12,11 @@ type Store struct {
 
 const URLS = "urls"
 
+var (
+	ErrNotFound      = errors.New("url not found")
+	ErrAlreadyExists = errors.New("short code already exists")
+)
+
 func New(path string) (*Store, error) {
 
 	db, err := bolt.Open(path, 0600, nil)
@@ -39,7 +44,7 @@ func (s *Store) GetRedirectURL(shortCode string) (string, error) {
 		}
 		result := bucket.Get([]byte(shortCode))
 		if result == nil {
-			return errors.New("url not found")
+			return ErrNotFound
 		}
 		url = string(result)
 		return nil
@@ -56,7 +61,7 @@ func (s *Store) PutRedirectURL(shortCode, url string) error {
 		}
 		result := bucket.Get([]byte(shortCode))
 		if result != nil {
-			return errors.New("short code already exists")
+			return ErrAlreadyExists
 		}
 		return bucket.Put([]byte(shortCode), []byte(url))
 	})
