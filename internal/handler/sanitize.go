@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/url"
+	"strings"
 )
 
 const DOMAIN = "shortly.uk"
@@ -28,7 +29,7 @@ func sanitizeURL(raw string) (string, error) {
 	if u.Host == "" {
 		return "", ErrMissingHost
 	}
-	if u.Hostname() == DOMAIN {
+	if strings.ToLower(u.Hostname()) == DOMAIN {
 		return "", ErrInvalidHost
 	}
 	return u.String(), nil
