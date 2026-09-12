@@ -26,7 +26,7 @@ func sanitizeURL(raw string) (string, error) {
 	if !(u.Scheme == "http" || u.Scheme == "https") {
 		return "", ErrInvalidScheme
 	}
-	if u.Host == "" {
+	if u.Hostname() == "" {
 		return "", ErrMissingHost
 	}
 	if strings.ToLower(u.Hostname()) == DOMAIN {
