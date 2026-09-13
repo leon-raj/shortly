@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"shortly/internal/store"
 )
@@ -15,7 +16,7 @@ func (h *Handler) Redirect(w http.ResponseWriter, r *http.Request) {
 
 	url, err := h.store.GetRedirectURL(s)
 	if err != nil {
-		if err == store.ErrNotFound {
+		if errors.Is(err, store.ErrNotFound) {
 			http.Error(w, err.Error(), http.StatusNotFound)
 		} else {
 			http.Error(w, "internal server error", http.StatusInternalServerError)
