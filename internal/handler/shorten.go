@@ -9,20 +9,21 @@ import (
 )
 
 type Request struct {
-	ShortCode string `json:"shortCode"`
-	URL       string `json:"url"`
+	URL string `json:"url"`
 }
 
 func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
+
+	shortCode := r.PathValue("shortCode")
+	if !isValidShortCode(shortCode) {
+		http.Error(w, "invalid short code", http.StatusBadRequest)
+		return
+	}
 
 	var req Request
 	err := json.UnmarshalRead(r.Body, &req)
 	if err != nil {
 		http.Error(w, "bad request body", http.StatusBadRequest)
-		return
-	}
-	if !isValidShortCode(req.ShortCode) {
-		http.Error(w, "invalid short code", http.StatusBadRequest)
 		return
 	}
 	url, err := sanitizeURL(req.URL)
@@ -41,7 +42,8 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	err = h.store.PutRedirectURL(req.ShortCode, url)
+
+	err = h.store.PutRedirectURL(shortCode, url)
 	if err != nil {
 		switch {
 		case errors.Is(err, store.ErrAlreadyExists):
@@ -53,10 +55,10 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Location", URL_PREFIX+req.ShortCode)
+	w.Header().Set("Location", URL_PREFIX+shortCode)
 	w.WriteHeader(http.StatusCreated)
 	//while unlikely, if the marshaling step fail, the client will receive StatusCreated with an improper body.
-	err = json.MarshalWrite(w, Request{req.ShortCode, url})
+	err = json.MarshalWrite(w, Request{url})
 	if err != nil {
 		slog.Error("failed to marshal")
 	}
