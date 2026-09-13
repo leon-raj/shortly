@@ -6,8 +6,6 @@ import (
 	"strings"
 )
 
-const DOMAIN = "shortly.uk"
-
 var (
 	ErrInvalidLength = errors.New("invalid URL length")
 	ErrInvalidScheme = errors.New("invalid scheme")
