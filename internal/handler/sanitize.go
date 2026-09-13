@@ -13,6 +13,7 @@ var (
 	ErrInvalidHost   = errors.New("invalid host")
 )
 
+// Need to disallow reserved URLs like DOMAIN/shorten
 func sanitizeURL(raw string) (string, error) {
 	if len(raw) == 0 || len(raw) > 2048 {
 		return "", ErrInvalidLength
