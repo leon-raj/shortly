@@ -16,5 +16,5 @@ func New(code string, message string) *Error {
 // Shared app apperr, feels weird rn to put it all together, might come up with something better later
 var (
 	ErrNotFound      = New("NOT_FOUND", "url not found")
-	ErrAlreadyExists = New("ALREADY_EXISTS", "the short code it already taken")
+	ErrAlreadyExists = New("ALREADY_EXISTS", "the alias is already taken")
 )

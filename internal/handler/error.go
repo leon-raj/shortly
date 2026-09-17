@@ -14,14 +14,14 @@ var (
 )
 
 var statusFromCode = map[string]int{
-	apperr.ErrAlreadyExists.Code:   http.StatusConflict,
-	apperr.ErrNotFound.Code:        http.StatusNotFound,
-	ErrInvalidShortCode.Code:       http.StatusUnprocessableEntity,
-	ErrInvalidShortCodeLength.Code: http.StatusUnprocessableEntity,
-	ErrInvalidURLLength.Code:       http.StatusUnprocessableEntity,
-	ErrMissingHost.Code:            http.StatusUnprocessableEntity,
-	ErrInvalidHost.Code:            http.StatusUnprocessableEntity,
-	ErrMalformedBody.Code:          http.StatusBadRequest,
+	apperr.ErrAlreadyExists.Code: http.StatusConflict,
+	apperr.ErrNotFound.Code:      http.StatusNotFound,
+	ErrInvalidAlias.Code:         http.StatusUnprocessableEntity,
+	ErrInvalidAliasLength.Code:   http.StatusUnprocessableEntity,
+	ErrInvalidURLLength.Code:     http.StatusUnprocessableEntity,
+	ErrMissingHost.Code:          http.StatusUnprocessableEntity,
+	ErrInvalidHost.Code:          http.StatusUnprocessableEntity,
+	ErrMalformedBody.Code:        http.StatusBadRequest,
 }
 
 //These functions should never be called on nil errors.

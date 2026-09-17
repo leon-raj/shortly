@@ -5,8 +5,8 @@ import "shortly/internal/apperr"
 const MAXLEN = 32
 
 var (
-	ErrInvalidShortCode       = apperr.New("INVALID_SHORTCODE", "the shortcode contains invalid characters")
-	ErrInvalidShortCodeLength = apperr.New("INVALID_SHORT_CODE_LENGTH", "the shortcode should be less than or equal to 32 characters and non-empty")
+	ErrInvalidAlias       = apperr.New("INVALID_ALIAS", "the shortcode contains invalid characters")
+	ErrInvalidAliasLength = apperr.New("INVALID_ALIAS_LENGTH", "the shortcode should be less than or equal to 32 characters and non-empty")
 )
 
 func isBase62(s string) bool {
@@ -18,12 +18,12 @@ func isBase62(s string) bool {
 	return true
 }
 
-func checkValidShortCode(s string) error {
-	if !(len(s) > 0 && len(s) <= MAXLEN) {
-		return ErrInvalidShortCodeLength
+func checkValidAlias(alias string) error {
+	if !(len(alias) > 0 && len(alias) <= MAXLEN) {
+		return ErrInvalidAliasLength
 	}
-	if !isBase62(s) {
-		return ErrInvalidShortCode
+	if !isBase62(alias) {
+		return ErrInvalidAlias
 	}
 	return nil
 }

@@ -18,8 +18,8 @@ func main() {
 
 	h := handler.New(s)
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /{shortCode}", h.Redirect)
-	mux.HandleFunc("PUT /{shortCode}", h.ShortenURL)
+	mux.HandleFunc("GET /{alias}", h.Redirect)
+	mux.HandleFunc("PUT /{alias}", h.ShortenURL)
 
 	fmt.Println("Starting Server")
 	err = http.ListenAndServe("0.0.0.0:2048", mux)

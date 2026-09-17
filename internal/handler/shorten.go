@@ -12,8 +12,8 @@ type Request struct {
 
 func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 
-	shortCode := r.PathValue("shortCode")
-	if err := checkValidShortCode(shortCode); err != nil {
+	alias := r.PathValue("alias")
+	if err := checkValidAlias(alias); err != nil {
 		WriteAPIError(w, err)
 		return
 	}
@@ -27,14 +27,14 @@ func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		WriteAPIError(w, err)
 		return
 	}
-	err = h.store.PutRedirectURL(shortCode, url)
+	err = h.store.PutRedirectURL(alias, url)
 	if err != nil {
 		WriteAPIError(w, err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Location", URL_PREFIX+shortCode)
+	w.Header().Set("Location", URL_PREFIX+alias)
 	w.WriteHeader(http.StatusCreated)
 	//while unlikely, if the marshaling step fail, the client will receive StatusCreated with an improper body.
 	err = json.MarshalWrite(w, Request{url})

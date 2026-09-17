@@ -7,13 +7,13 @@ import (
 
 func (h *Handler) Redirect(w http.ResponseWriter, r *http.Request) {
 
-	s := r.PathValue("shortCode")
-	if err := checkValidShortCode(s); err != nil {
+	alias := r.PathValue("alias")
+	if err := checkValidAlias(alias); err != nil {
 		WritePageError(w, apperr.ErrNotFound)
 		return
 	}
 
-	url, err := h.store.GetRedirectURL(s)
+	url, err := h.store.GetRedirectURL(alias)
 	if err != nil {
 		WritePageError(w, err)
 		return
