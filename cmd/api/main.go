@@ -18,7 +18,6 @@ func main() {
 
 	h := handler.New(s)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/{$}", h.HomePage)
 	mux.HandleFunc("GET /{shortCode}", h.Redirect)
 	mux.HandleFunc("PUT /{shortCode}", h.ShortenURL)
 

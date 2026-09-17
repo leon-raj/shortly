@@ -2,10 +2,8 @@ package handler
 
 import (
 	"encoding/json/v2"
-	"errors"
 	"log/slog"
 	"net/http"
-	"shortly/internal/store"
 )
 
 type Request struct {
@@ -15,42 +13,23 @@ type Request struct {
 func (h *Handler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 
 	shortCode := r.PathValue("shortCode")
-	if !isValidShortCode(shortCode) {
-		http.Error(w, "invalid short code", http.StatusBadRequest)
+	if err := checkValidShortCode(shortCode); err != nil {
+		WriteAPIError(w, err)
 		return
 	}
-
 	var req Request
-	err := json.UnmarshalRead(r.Body, &req)
-	if err != nil {
-		http.Error(w, "bad request body", http.StatusBadRequest)
+	if err := json.UnmarshalRead(r.Body, &req); err != nil {
+		WriteAPIError(w, ErrMalformedBody)
 		return
 	}
 	url, err := sanitizeURL(req.URL)
 	if err != nil {
-		switch {
-		case errors.Is(err, ErrInvalidScheme):
-			http.Error(w, "scheme must be http or https", http.StatusBadRequest)
-		case errors.Is(err, ErrInvalidLength):
-			http.Error(w, "URL must be non-empty with length less than or equal to 2048 characters", http.StatusBadRequest)
-		case errors.Is(err, ErrMissingHost):
-			http.Error(w, "URL must contain a host", http.StatusBadRequest)
-		case errors.Is(err, ErrInvalidHost):
-			http.Error(w, "hostname not allowed", http.StatusBadRequest)
-		default:
-			http.Error(w, "invalid URL", http.StatusBadRequest)
-		}
+		WriteAPIError(w, err)
 		return
 	}
-
 	err = h.store.PutRedirectURL(shortCode, url)
 	if err != nil {
-		switch {
-		case errors.Is(err, store.ErrAlreadyExists):
-			http.Error(w, "short code already in use", http.StatusConflict)
-		default:
-			http.Error(w, "internal server error", http.StatusInternalServerError)
-		}
+		WriteAPIError(w, err)
 		return
 	}
 

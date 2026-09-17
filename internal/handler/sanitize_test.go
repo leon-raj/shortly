@@ -163,17 +163,17 @@ func TestSanitizeURL(t *testing.T) {
 		{
 			name:    "empty string",
 			url:     "",
-			wantErr: ErrInvalidLength,
+			wantErr: ErrInvalidURLLength,
 		},
 		{
 			name:    "2049 characters",
 			url:     "https://example.com/" + strings.Repeat("a", 2029),
-			wantErr: ErrInvalidLength,
+			wantErr: ErrInvalidURLLength,
 		},
 		{
 			name:    "very long URL",
 			url:     "https://example.com/" + strings.Repeat("a", 10000),
-			wantErr: ErrInvalidLength,
+			wantErr: ErrInvalidURLLength,
 		},
 
 		// ============================================================
@@ -337,7 +337,7 @@ func TestSanitizeURL(t *testing.T) {
 		},
 		{
 			name:    "DOMAIN mixed case",
-			url:     "https://ShOrTlY.Uk",
+			url:     "https://" + strings.ToUpper(DOMAIN[0:1]) + strings.ToLower(DOMAIN[1:2]+DOMAIN[2:]),
 			wantErr: ErrInvalidHost,
 		},
 		{

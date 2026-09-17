@@ -1,7 +1,7 @@
 package store
 
 import (
-	"errors"
+	"shortly/internal/apperr"
 
 	bolt "go.etcd.io/bbolt"
 )
@@ -13,8 +13,7 @@ type Store struct {
 const URLS = "urls"
 
 var (
-	ErrNotFound      = errors.New("url not found")
-	ErrAlreadyExists = errors.New("short code already exists")
+	ErrBucketMissing = apperr.New("BUCKET_MISSING", "bucket not found")
 )
 
 func New(path string) (*Store, error) {
@@ -40,11 +39,11 @@ func (s *Store) GetRedirectURL(shortCode string) (string, error) {
 	err := s.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(URLS))
 		if bucket == nil {
-			return errors.New("bucket not found")
+			return ErrBucketMissing
 		}
 		result := bucket.Get([]byte(shortCode))
 		if result == nil {
-			return ErrNotFound
+			return apperr.ErrNotFound
 		}
 		url = string(result)
 		return nil
@@ -58,11 +57,11 @@ func (s *Store) PutRedirectURL(shortCode, url string) error {
 	return s.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(URLS))
 		if bucket == nil {
-			return errors.New("bucket not found")
+			return ErrBucketMissing
 		}
 		result := bucket.Get([]byte(shortCode))
 		if result != nil {
-			return ErrAlreadyExists
+			return apperr.ErrAlreadyExists
 		}
 		return bucket.Put([]byte(shortCode), []byte(url))
 	})
